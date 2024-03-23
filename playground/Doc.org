@@ -1,0 +1,38 @@
+* NixOS
+** Keyboard Layout
+#+begin_src nix
+  services = {
+    xserver = {
+      xbk = {
+        layout = "us";
+        variant = "dvp"
+      };
+    };
+  };
+
+  console = {
+    useXkbConfig = true;
+  };
+#+end_src
+** ZSH
+*** Using ZSH
+#+begin_src nix
+  programs.zsh.enable = true;
+  users = {
+    defaultUserShell = pkgs.zsh;
+    extraUsers = {
+      ${NAME} = {
+        shell = pkgs.zsh;
+      };
+    };
+  }
+#+end_src
+*** Configuring ZSH
+** Doas
+#+begin_src nix
+  environment = {
+    shellAliases = {
+      doas = "sudo";
+    };
+  };
+#+end_src
