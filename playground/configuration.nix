@@ -47,6 +47,9 @@
       };
     };
   };
+  console = {
+    useXkbConfig = true;
+  };
 
 
   programs = {
@@ -57,10 +60,10 @@
   users = {
     defaultUserShell = pkgs.zsh;
     extraUsers = {
-      hoskellisiera = {
+      hoskell = {
         isNormalUser = true;
         extraGroups = [ "wheel" ];
-        password = "haskell";
+        password = "hoskell";
         shell = pkgs.zsh;
       };
     };
