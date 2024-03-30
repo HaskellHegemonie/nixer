@@ -1,9 +1,28 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [];
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  imports = [
+    # ./hardware-configuration.nix
+   "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    # ./disko-test.nix
+    ./disko-hybrid.nix
+  ];
+  # boot.loader.systemd-boot.enable = true;
+  # boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    loader = {
+      grub = {
+        enable = true;
+        efiSupport = true;
+        efiInstallAsRemovable = false;
+        device = "nodev";
+      };
+      efi = {
+        efiSysMountPoint = "/boot/efi";
+        canTouchEfiVariables = true;
+      };
+    };
+  };
 
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -35,6 +54,11 @@
       vim
       git
     ];
+    etc = {
+      disko = {
+        source = ./disko-hybrid.nix;
+      };
+    };
   };
 
   services = {
