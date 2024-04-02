@@ -1,3 +1,4 @@
 /result
+/repl-result-out
 /hardware-configuration.nix
 /nixos.qcow2
