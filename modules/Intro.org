@@ -1,0 +1,56 @@
+#+property: header_args :padline true :comments link 
+* [[https://nix.dev/tutorials/module-system/module-system.html][link]]
+* declaring options
+#+name: default.nix
+#+begin_src nix :tangle default.nix
+  # pkgs are available through config._modules.args = { inherit pkgs; }; 
+  { lib, pkgs, ...}:
+  {
+    options = {
+      scripts.output = lib.mkOption {
+        type = lib.types.lines;
+      };
+    };
+    # config = {
+    #   scripts.output = 42;
+    # };
+    # config = {
+    #   scripts = {
+    #     output = ''
+    #       ./map size=640x640 scale=2 | feh -
+    #     '';
+    #   };
+    # };
+    config = {
+      scripts = {
+        output = pkgs.writeShellApplication = {
+          name = "map"
+          runtimeInputs = with pkgs; [curl feh];
+          text = ''
+            ${./map} size=640x640 scale=2 | feh -
+          '';
+        };
+      };
+  }
+#+end_src
+
+#+name: eval.nix
+#+begin_src nix :tangle eval.nix
+  let
+    system = builtins.currentSystem;
+    pkgs = import <nixpkgs> { inherit system; config = {}; overlays = []; };
+    lib = pkgs.lib;
+  in
+
+  lib.evalModules {
+    modules = [
+      ({config, ...}: {config._modules.args = {inherit pkgs;}; })
+      ./default.nix
+    ];
+  }
+#+end_src
+* shell commands
+#+name: commands.sh
+#+begin_src bash :tangle commands.sh
+  nix-instantiate --eval eval.nix -A config.scripts.output
+#+end_src

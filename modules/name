@@ -1,0 +1,6 @@
+{ system ? bulitins.currentSystem
+, pkgs ? import <nixpkgs> { inherit system; config = {}; overlays = []; }
+}:
+pkgs.lib.evalModules = [
+  ./default.nix
+];
